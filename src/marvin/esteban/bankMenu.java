@@ -30,6 +30,10 @@ public class bankMenu {
         for (int i = 0; i < cuentas.size(); i++) {
             if (titular.equalsIgnoreCase(cuentas.get(i).getHolder())) {
                 System.out.println("El saldo de la cuenta de " + cuentas.get(i).getHolder() + " es " + cuentas.get(i).getBalance());
+
+            } else if (!titular.equalsIgnoreCase(cuentas.get(i + 1).getHolder())) {
+                System.out.println("Titular no encontardo");
+                break;
             }
 
         }
@@ -65,50 +69,63 @@ public class bankMenu {
 
         for (int i = 0; i < cuentas.size(); i++) {
             if (titular.equalsIgnoreCase(cuentas.get(i).getHolder())) {
-                System.out.print("Introduzca dinero dinero a retirar: ");
+                System.out.print("Introduzca dinero a retirar: ");
                 seleccion = sc.nextInt();
-                retiro = cuentas.get(i).getBalance() - seleccion;
-                cuentas.get(i).setBalance(retiro);
-                System.out.println("El dinero ha sido retirado de la cuenta.");
+                if (cuentas.get(i).getBalance() > seleccion) {
+                    retiro = cuentas.get(i).getBalance() - seleccion;
+                    cuentas.get(i).setBalance(retiro);
+                    System.out.println("El dinero ha sido retirado de la cuenta.");
+                } else if (cuentas.get(i).getBalance() < seleccion) {
+                    System.out.println("La accion no se ha podido completar, dinero insuficiente");
+                    break;
+                }
             }
 
         }
     }
 
     public static void realizarTransferencia(ArrayList<Account> cuentas) {
-        Scanner sc = new Scanner(System.in);     
+        Scanner sc = new Scanner(System.in);
         System.out.print("Ingrese nombre el del titular origen: ");
         String titularOrigen = sc.nextLine();
         int cantidadTransfer = 0;
         int dineroOrigen;
         int dineroDestino;
-          for (int i = 0; i < cuentas.size(); i++) {
+        for (int i = 0; i < cuentas.size(); i++) {
             if (titularOrigen.equalsIgnoreCase(cuentas.get(i).getHolder())) {
                 System.out.print("Ingrese el nombre del destinatario: ");
                 String titularDestinatario = sc.nextLine();
-                    for (int j = 0; j < cuentas.size(); j++) {
-                        if (titularDestinatario.equalsIgnoreCase(cuentas.get(j).getHolder())){
+                for (int j = 0; j < cuentas.size(); j++) {
+                    if (titularDestinatario.equalsIgnoreCase(cuentas.get(j).getHolder())) {
                         System.out.print("Ingrese la cantidad a transferir: ");
                         cantidadTransfer = sc.nextInt();
-                        
-                        if(cantidadTransfer < cuentas.get(i).getBalance()){
-                        dineroOrigen = cuentas.get(i).getBalance()-cantidadTransfer;
-                        cuentas.get(i).setBalance(dineroOrigen);
+
+                        if (cantidadTransfer < cuentas.get(i).getBalance()) {
+                            dineroOrigen = cuentas.get(i).getBalance() - cantidadTransfer;
+                            cuentas.get(i).setBalance(dineroOrigen);
                             System.out.println("Transferencia realizada exitosamente");
-                        }else{
-                        dineroOrigen = cantidadTransfer-cuentas.get(i).getBalance();
-                        cuentas.get(i).setBalance(dineroOrigen);    
+                        } else if (cantidadTransfer > cuentas.get(i).getBalance()) {
+                            System.out.println("Accion no completada, saldo insuficiente.");
+                            break;
+                        } else {
+                            dineroOrigen = cantidadTransfer - cuentas.get(i).getBalance();
+                            cuentas.get(i).setBalance(dineroOrigen);
                             System.out.println("Transferencia realizada exitosamente");
                         }
                         dineroDestino = cantidadTransfer + cuentas.get(j).getBalance();
                         cuentas.get(j).setBalance(dineroDestino);
-                        }
+                    } else if (!titularDestinatario.equalsIgnoreCase(cuentas.get(i + 1).getHolder())) {
+                        System.out.println("Titular no encontrado");
+                        break;
+                    }
                 }
-                    
+
+            } else if (!titularOrigen.equalsIgnoreCase(cuentas.get(i + 1).getHolder())) {
+                System.out.println("Titular no encontrado");
+                break;
             }
 
         }
-        
-        
+
     }
 }
